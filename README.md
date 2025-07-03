@@ -16,9 +16,9 @@ var ErrProductInUse = tagerr.ErrInvalidReq.Wrap(&tagerr.Err{
 This yields the following:
 ```go
 &tagerr.Err{
-	Err: "invalid request: product in use by at least one shop",
-	Tag: "product_in_use",
-	HTTPCode: 401,
+    Err: "invalid request: product in use by at least one shop",
+    Tag: "product_in_use",
+    HTTPCode: 401,
 }
 ```
 
@@ -26,8 +26,8 @@ You can also wrap other error types inside:
 ```go
 // If we have:
 var ErrDBNotHandled = tagerr.ErrInternal.Wrap(&tagerr.Err{
-	Err:	errors.New("unhandled database error"),
-	Tag:	"unhandled_db_error",
+    Err:    errors.New("unhandled database error"),
+    Tag:    "unhandled_db_error",
 })
 // And somewhere in DB layer we have:
 return ErrDBNotHandled.Wrap(err) // this inner err can be a postgres driver error
@@ -35,8 +35,8 @@ return ErrDBNotHandled.Wrap(err) // this inner err can be a postgres driver erro
 We then get:
 ```go
 &tagerr.Err{
-	Err: "internal server error: unhandled database error: unsupported data type Address..",
-	Tag: "unhandled_db_error",
-	HTTPCode: 500,
+    Err: "internal server error: unhandled database error: unsupported data type Address..",
+    Tag: "unhandled_db_error",
+    HTTPCode: 500,
 }
 ```
