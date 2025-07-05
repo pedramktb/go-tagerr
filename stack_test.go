@@ -18,7 +18,7 @@ func stacklessErrorReturningFunction() error {
 	return stacklessError
 }
 
-func stackfullErrorerrorReturningFunction() error {
+func stackfullErrorReturningFunction() error {
 	return stacklessError.WithStack()
 }
 
@@ -26,10 +26,10 @@ func Test_Stack(t *testing.T) {
 	err := stacklessErrorReturningFunction()
 	assert.Empty(t, err.(*tagerr.Err).Stack())
 
-	err = stackfullErrorerrorReturningFunction()
+	err = stackfullErrorReturningFunction()
 	assert.NotContains(t, err.(*tagerr.Err).Stack(), "github.com/pedramktb/go-tagerr.(*Err).WithStack")
 	assert.NotContains(t, err.(*tagerr.Err).Stack(), "/err.go:")
 	assert.Contains(t, err.(*tagerr.Err).Stack(), "github.com/pedramktb/go-tagerr_test.Test_Stack")
-	assert.Contains(t, err.(*tagerr.Err).Stack(), "github.com/pedramktb/go-tagerr_test.stackfullErrorerrorReturningFunction")
+	assert.Contains(t, err.(*tagerr.Err).Stack(), "github.com/pedramktb/go-tagerr_test.stackfullErrorReturningFunction")
 	assert.Contains(t, err.(*tagerr.Err).Stack(), "/stack_test.go:")
 }

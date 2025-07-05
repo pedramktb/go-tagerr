@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"runtime"
+	"strings"
 
 	grpccodes "google.golang.org/grpc/codes"
 )
@@ -55,15 +56,15 @@ func (e *Err) Stack(options ...StackOption) string {
 		return ""
 	}
 	frames := runtime.CallersFrames(e.pcs)
-	s := ""
+	var builder strings.Builder
 	for {
 		frame, more := frames.Next()
-		s += format(frame)
+		builder.WriteString(format(frame))
 		if !more {
 			break
 		}
 	}
-	return s
+	return builder.String()
 }
 
 // Wrap a target error inside this *tagerr.Err.
