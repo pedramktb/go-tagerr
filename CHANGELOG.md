@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [Unreleased]
+## [v1.2.0] - 2025-07-06
 
 ### Added
 - `(*Err).WithStack()`: Adds the call site stack trace to the error.
@@ -15,14 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
-## [v1.1.0]  - 2025-07-04
+## [v1.1.0]  - 2025-07-05
 
 ### Added
 - `(*Err).Unwrap()`: Implements the standard `Unwrap() error` interface, allowing integration with `errors.Unwrap()`. Supports nested unwrapping of single and multi-error types of length 2.
 
 ---
 
-## [v1.0.0] - 2025-07-02
+## [v1.0.0] - 2025-07-03
 
 ### Added
 - Initial release
