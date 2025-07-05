@@ -3,6 +3,8 @@ package tagerr
 import (
 	"errors"
 	"fmt"
+	"runtime"
+	"strings"
 
 	grpccodes "google.golang.org/grpc/codes"
 )
@@ -16,9 +18,54 @@ type Err struct {
 	Tag      string
 	HTTPCode int
 	GRPCCode grpccodes.Code
+	pcs      []uintptr
 }
 
 func (e *Err) Error() string { return e.Err.Error() }
+
+// WithStack adds the stack trace of the line calling it to the error.
+func (e *Err) WithStack() *Err {
+	pcs := make([]uintptr, 64)
+	n := runtime.Callers(2, pcs)
+	return &Err{e.Err, e.Tag, e.HTTPCode, e.GRPCCode, pcs[:n]}
+}
+
+// Stack returns the stack trace of the error.
+// Stack trace is empty if the WithStack method was not called on the error.
+// If no format is specified it uses default formatting ("%s\n\t%s:%d\n", frame.Function, frame.File, frame.Line).
+type stackOptions struct {
+	format func(frame runtime.Frame) string
+}
+type StackOption func(*stackOptions)
+
+func StackWithFormat(format func(runtime.Frame) string) StackOption {
+	return func(opts *stackOptions) { opts.format = format }
+}
+
+func (e *Err) Stack(options ...StackOption) string {
+	opts := &stackOptions{
+		format: func(frame runtime.Frame) string {
+			return fmt.Sprintf("%s\n\t%s:%d\n", frame.Function, frame.File, frame.Line)
+		},
+	}
+	for i := range options {
+		options[i](opts)
+	}
+	format := opts.format
+	if len(e.pcs) == 0 {
+		return ""
+	}
+	frames := runtime.CallersFrames(e.pcs)
+	var builder strings.Builder
+	for {
+		frame, more := frames.Next()
+		builder.WriteString(format(frame))
+		if !more {
+			break
+		}
+	}
+	return builder.String()
+}
 
 // Wrap a target error inside this *tagerr.Err.
 // If the target error is also a *tagerr.Err, target's tag will be used.
