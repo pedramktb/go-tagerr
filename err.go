@@ -18,9 +18,7 @@ type Err struct {
 	GRPCCode grpccodes.Code
 }
 
-func (e *Err) Error() string {
-	return e.Err.Error()
-}
+func (e *Err) Error() string { return e.Err.Error() }
 
 // Wrap a target error inside this *tagerr.Err.
 // If the target error is also a *tagerr.Err, target's tag will be used.
@@ -39,6 +37,20 @@ func (e *Err) Wrap(target error) *Err {
 		HTTPCode: e.HTTPCode,
 		GRPCCode: e.GRPCCode,
 	}
+}
+
+// Unwrap implements interface { Unwrap() error } so that errors.Unwrap() can unwrap this error.
+func (e *Err) Unwrap() error {
+	switch err := e.Err.(type) {
+	case interface{ Unwrap() error }:
+		return err.Unwrap()
+	case interface{ Unwrap() []error }:
+		errs := err.Unwrap()
+		if len(errs) == 2 {
+			return errs[1]
+		}
+	}
+	return nil
 }
 
 // Returns true if the errors.Is() on the underlying error returns true.
