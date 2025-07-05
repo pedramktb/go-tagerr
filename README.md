@@ -1,6 +1,6 @@
 # tagerr
 
-tagerr is a go package that provides a hirearchical error type that allows to store the tag of the most inner child of its type and the code of the root error. Additionally, by using `WithStack()` method you can add a stack trace to the error which can be later accessed via `Stack()`.
+tagerr is a go package that provides a hierarchical error type that allows to store the tag of the most inner child of its type and the code of the root error. Additionally, by using `WithStack()` method you can add a stack trace to the error which can be later accessed via `Stack()`.
 
 This is useful when you want the most inner "meaningful" error code while being able to check if error is of one of the outer types.
 
